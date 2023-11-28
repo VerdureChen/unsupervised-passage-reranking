@@ -61,6 +61,7 @@ class OpenQADataset(ABC, Dataset):
         answers = row['answers']
 
         sample = {'id': idx,
+                  'query_id': row['query_id'],
                   'encoder_ids': encoder_contexts,
                   'decoder_ids': decoder_prompt,
                   'question': row['question'],
@@ -69,12 +70,17 @@ class OpenQADataset(ABC, Dataset):
 
     @staticmethod
     def load_dataset(filepath):
-        with open(filepath) as fp:
+        with open(filepath, 'r', encoding='utf-8') as fp:
+            # make it can read no-ascii characters
             data = json.load(fp)
-
+        samples = []
         # condition for interfacing with pyserineni BM25 outputs
         if isinstance(data, dict):
-            return list(data.values())
+            for query_id, content in data.items():
+                sample = content
+                sample['query_id'] = query_id  # add the query_id to the sample
+                samples.append(sample)
+            return samples
         else:
             return data
 
@@ -125,6 +131,6 @@ class CustomDataLoader(DataLoader):
         for d in batch_data:
             for k, v in d.items():
                 tensorized.setdefault(k, []).append(v)
-        assert len(tensorized) == 5
+        assert len(tensorized) == 6
 
         return tensorized

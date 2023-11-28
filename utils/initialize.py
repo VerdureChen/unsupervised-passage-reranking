@@ -18,6 +18,7 @@ def initialize_distributed(args):
         if args.rank == 0:
             print('> initializing torch distributed ...', flush=True)
 
+        args.local_rank = int(os.getenv('LOCAL_RANK', args.local_rank))
         # Manually set the device ids.
         if device_count > 0:
             device = args.rank % device_count
