@@ -31,7 +31,7 @@ class OpenQADataset(ABC, Dataset):
 
         print_rank_0('  >> total number of samples: {}'.format(len(self.samples)))
 
-        if "trivia" in filepath or 'webq' in filepath or 'entity-questions' in filepath \
+        if "tqa" in filepath or 'webq' in filepath or 'pop' in filepath \
                 or "BEIR" in filepath or "squad" in filepath:
             self.ques_punc = ""
         elif "nq" in filepath or "efficientqa" in filepath:
